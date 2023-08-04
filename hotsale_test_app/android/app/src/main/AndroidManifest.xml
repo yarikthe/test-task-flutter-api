@@ -1,7 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.hotsale_test_app">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
    <application
-        android:label="hotsale_test_app"
+        android:label="HotSale App Test Demo"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
