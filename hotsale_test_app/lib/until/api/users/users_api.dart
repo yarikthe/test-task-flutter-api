@@ -17,7 +17,9 @@ class UsersApi {
           return [];
         }
 
-        return json.decode(response.body).map((json) => UserModel.fromJson(json)).toList();
+        List data = json.decode(response.body)['data'];
+
+        return data.map((json) => UserModel.fromJson(json)).toList();
 
       }on Exception catch (e) {
 

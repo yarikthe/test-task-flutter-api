@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../until/model/user_model.dart';
 import '../screen/users/detail_screen.dart';
 
 class UserCardComponent extends StatelessWidget {
-  int id;
-  UserCardComponent({super.key, required this.id});
+  UserModel user;
+  UserCardComponent({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +33,15 @@ class UserCardComponent extends StatelessWidget {
         onTap: () => Get.to(DetailUserScreen()),
         child: ListTile(
         leading:  Image.network(
-          'https://reqres.in/img/faces/2-image.jpg',
+          user.avatar,
           height: 50,
         ),
         title:  Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          Text('NAME ${id}', style: Theme.of(context).textTheme.titleLarge),
-          Text('email', style: Theme.of(context).textTheme.caption),
+          Text('${user.firstName} ${user.lastName[0]}.', style: Theme.of(context).textTheme.titleLarge),
+          Text(user.email, style: Theme.of(context).textTheme.caption),
         ]),
         trailing:  Icon(Icons.chevron_right, size: 30, color: Colors.grey)
       )
