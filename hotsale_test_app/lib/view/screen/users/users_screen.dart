@@ -1,9 +1,11 @@
+
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:hotsale_test_app/until/controller/user_controller.dart';
+import 'package:hotsale_test_app/until/storage/local_storage.dart';
 import 'package:hotsale_test_app/view/components/user_card_components.dart';
+
+import '../../../until/internet/check_internet.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -21,22 +23,27 @@ class _UsersScreenState extends State<UsersScreen> {
     super.initState();
   }
 
-  void init() async {}
+  void init() async {
+   
+  }
+
+  @override
+  void dispose() {
+    LocalStorage().clearLocalData();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   title: Text('Users'),
-      //   actions: []),
-      body: Container(
+     
+    return  Container(
+        height: MediaQuery.of(context).size.height * .95 - 30,
         padding: EdgeInsets.all(20),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: MediaQuery.of(context).size.height * .05),
+              // SizedBox(height: MediaQuery.of(context).size.height * .05),
               Text(
                 'Users',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -55,7 +62,6 @@ class _UsersScreenState extends State<UsersScreen> {
                             return UserCardComponent(user: controller.users[i]);
                           }))),
             ]),
-      ),
-    );
+      );
   }
 }

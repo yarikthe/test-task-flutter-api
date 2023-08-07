@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:hotsale_test_app/until/api/method_api.dart';
 import 'package:hotsale_test_app/until/model/user_model.dart';
 
+import '../../storage/local_storage.dart';
+
 class UsersApi {
 
   Future<List<UserModel>?> fetchData({String options = '?page=1'}) async{
@@ -17,6 +19,9 @@ class UsersApi {
           return [];
         }
 
+
+        await LocalStorage().setLocalData(response.body);
+        
         List data = json.decode(response.body)['data'];
 
         return data.map((json) => UserModel.fromJson(json)).toList();

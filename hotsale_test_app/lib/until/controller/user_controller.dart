@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:hotsale_test_app/until/api/users/users_api.dart';
+import 'package:hotsale_test_app/until/internet/check_internet.dart';
 import 'package:hotsale_test_app/until/model/user_model.dart';
+import 'package:hotsale_test_app/until/storage/local_storage.dart';
 
 class UserController extends GetxController with StateMixin<List<UserModel>> {
   
@@ -14,8 +18,18 @@ class UserController extends GetxController with StateMixin<List<UserModel>> {
 
   @override
   void onInit() {
-    fetch();
+    init();
     super.onInit();
+  }
+
+  void init () async{
+    var statusOnline  = await CheckConnectionToInternet().getInternetConnectStatus();
+
+    if(statusOnline == 'Offline'){
+     localFfetch();
+    }else{
+     fetch();
+    }
   }
 
   @override
@@ -25,6 +39,7 @@ class UserController extends GetxController with StateMixin<List<UserModel>> {
 
   void onClose() {
     users.clear();
+    clearSingleUserData();
     super.onClose();
   }
 
@@ -39,8 +54,33 @@ class UserController extends GetxController with StateMixin<List<UserModel>> {
     update();
   }
 
+  void localFfetch() async {
+    final data = await LocalStorage().getLocalData();
+
+    if (data != null) {
+      users.value = data;
+    }
+
+    isLoad.value = false;
+    update();
+  }
+
   void single(id) async {
     final user = await UsersApi().fetchSingle(id);
+
+    if (user != null) {
+      singleUser = user;
+    }
+
+    isUserLoad.value = false;
+    update();
+  }
+
+  void localSingle(id) async {
+
+    final user = await LocalStorage().getLocalSingle(id);
+
+    print('object ${user}');
 
     if (user != null) {
       singleUser = user;

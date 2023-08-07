@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:hotsale_test_app/until/controller/user_controller.dart';
+import 'package:hotsale_test_app/until/internet/check_internet.dart';
 
 import '../../components/field_detail_screen_component.dart';
 
@@ -24,13 +25,28 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
   }
 
   void init() async {
-    controller.single(widget.id);
+    checkIsLoadFromLocalStorage();
   }
 
   @override
   void dispose() {
     controller.clearSingleUserData();
     super.dispose();
+  }
+
+  void checkIsLoadFromLocalStorage() async {
+
+    var statusOnline  = await CheckConnectionToInternet().getInternetConnectStatus();
+
+    if(statusOnline == 'Offline'){
+
+      print('statusOnline ${statusOnline}');
+      
+      controller.localSingle(widget.id);
+    }else{
+      controller.single(widget.id);
+    }
+    
   }
 
   @override
