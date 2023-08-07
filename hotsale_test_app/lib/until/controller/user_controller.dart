@@ -16,6 +16,9 @@ class UserController extends GetxController with StateMixin<List<UserModel>> {
   late UserModel? singleUser;
   var isUserLoad = true.obs;
 
+  var loadUserMoreText = ''.obs;
+  var isLoadMore = false.obs;
+
   @override
   void onInit() {
     init();
@@ -54,6 +57,25 @@ class UserController extends GetxController with StateMixin<List<UserModel>> {
     update();
   }
 
+  void loadMore(page) async {
+    
+    isLoadMore.value = true;
+    update();
+
+    final data = await UsersApi().fetchData(options: "?page=" + page);
+
+    if (data != null) {
+      users.addAll(data);
+      loadUserMoreText.value = 'Loaded new users';
+    }else{
+      loadUserMoreText.value = 'All users loaded';
+    }
+
+    loadUserMoreText.value = '';
+    isLoadMore.value = false;
+    update();
+  }
+
   void localFfetch() async {
     final data = await LocalStorage().getLocalData();
 
@@ -79,8 +101,6 @@ class UserController extends GetxController with StateMixin<List<UserModel>> {
   void localSingle(id) async {
 
     final user = await LocalStorage().getLocalSingle(id);
-
-    print('object ${user}');
 
     if (user != null) {
       singleUser = user;

@@ -12,15 +12,14 @@ class UsersApi {
 
       try{
 
-        final response = await ApiMethod().methodGet('users/' + options);
+        final response = await ApiMethod().methodGet('users/' + options + "&per_page=4");
 
         if(response.statusCode != 200){
           print('Response Code: ${response.statusCode}');
-          return [];
+          return null;
         }
 
-
-        await LocalStorage().setLocalData(response.body);
+        await LocalStorage().updateLocalData(response.body);
         
         List data = json.decode(response.body)['data'];
 

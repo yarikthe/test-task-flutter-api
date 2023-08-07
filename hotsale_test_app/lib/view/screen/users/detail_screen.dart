@@ -17,6 +17,7 @@ class DetailUserScreen extends StatefulWidget {
 
 class _DetailUserScreenState extends State<DetailUserScreen> {
   var controller = Get.put(UserController());
+  String? statusOnline;
 
   @override
   void initState() {
@@ -35,18 +36,20 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
   }
 
   void checkIsLoadFromLocalStorage() async {
+    var _statusOnline =
+        await CheckConnectionToInternet().getInternetConnectStatus();
 
-    var statusOnline  = await CheckConnectionToInternet().getInternetConnectStatus();
-
-    if(statusOnline == 'Offline'){
+    if (_statusOnline == 'Offline') {
+      setState(() {
+        statusOnline = _statusOnline as String;
+      });
 
       print('statusOnline ${statusOnline}');
-      
+
       controller.localSingle(widget.id);
-    }else{
+    } else {
       controller.single(widget.id);
     }
-    
   }
 
   @override
@@ -85,8 +88,16 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                         ),
                         SizedBox(height: 50),
                         Center(
-                            child: Image.network(
-                          '${controller.singleUser?.avatar.toString() ?? '<AVATAR>'}',
+                            child: FadeInImage.assetNetwork(
+                          placeholderErrorBuilder: (contect, _, e) =>
+                              CircularProgressIndicator(),
+                          placeholder: '<AVATAR_PLACEHOLDER>',
+                          imageErrorBuilder: (contect, _, e) => Padding(
+                              padding: EdgeInsets.all(20),
+                              child: Icon(Icons.person, size: 156)),
+                          image:
+                              '${controller.singleUser?.avatar.toString() ?? '<AVATAR>'}',
+                          width: 150,
                         )),
                         SizedBox(height: 50),
                         FieldComponent(

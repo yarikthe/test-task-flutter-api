@@ -22,11 +22,8 @@ class CheckConnectionToInternet with ChangeNotifier {
   void checkConnectivity() async {
     var connectionResult = await _connectivity.checkConnectivity();
 
-    if (connectionResult == ConnectivityResult.mobile) {
-      status = "Mobile LTE";
-      notifyListeners();
-    } else if (connectionResult == ConnectivityResult.wifi) {
-      status = "Wi-Fi Network";
+    if (connectionResult == ConnectivityResult.mobile || connectionResult == ConnectivityResult.wifi) {
+      status = "Online";
       notifyListeners();
     } else {
       status = "Offline";
@@ -40,14 +37,9 @@ class CheckConnectionToInternet with ChangeNotifier {
     _streamSubscription = _connectivity.onConnectivityChanged.listen((event) {
       switch (event) {
         case ConnectivityResult.mobile:
-          {
-            status = "Mobile LTE";
-            notifyListeners();
-          }
-          break;
         case ConnectivityResult.wifi:
           {
-            status = "Wi-Fi Network";
+            status = "Online";
             notifyListeners();
           }
           break;
@@ -66,14 +58,6 @@ class CheckConnectionToInternet with ChangeNotifier {
   void setInternetConnectStatus() async {
     final SharedPreferences prefs = await _prefs;
     await prefs.setString('online_status', status);
-
-    var controller = Get.put(UserController());
-
-    if (status == 'Offline') {
-      controller.localFfetch();
-    } else {
-      controller.fetch();
-    }
   }
 
   Future<String?> getInternetConnectStatus() async {

@@ -31,6 +31,21 @@ class LocalStorage {
     await prefs.setString('users', data);
   }
 
+  Future<void>updateLocalData(data) async{
+
+    setLocalData(data);
+
+    final SharedPreferences prefs = await _prefs;
+
+    // List currentData = json.decode(prefs.getString('users') as String)['data'];
+
+    // print(' data now ${currentData}');
+
+    // print(' data NEW ${data}');
+
+    // await prefs.setString('users',   data);
+  } 
+
   Future<void> clearLocalData() async{
     
     final SharedPreferences prefs = await _prefs;
