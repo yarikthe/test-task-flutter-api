@@ -32,7 +32,7 @@ class UserCardComponent extends StatelessWidget {
         ),
         // padding: EdgeInsets.all(5),
         child: InkWell(
-            onTap: () => Get.to(DetailUserScreen(id: user.id)),
+            onTap: () => Get.to(()=>DetailUserScreen(id: user.id)),
             child: Container(
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

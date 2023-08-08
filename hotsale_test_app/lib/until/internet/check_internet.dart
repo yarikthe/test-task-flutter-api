@@ -19,14 +19,19 @@ class CheckConnectionToInternet with ChangeNotifier {
 
   late StreamSubscription? _streamSubscription;
 
+  var controller = Get.put(UserController());
+
   void checkConnectivity() async {
     var connectionResult = await _connectivity.checkConnectivity();
 
-    if (connectionResult == ConnectivityResult.mobile || connectionResult == ConnectivityResult.wifi) {
+    if (connectionResult == ConnectivityResult.mobile ||
+        connectionResult == ConnectivityResult.wifi) {
       status = "Online";
+      // controller.fetch();
       notifyListeners();
     } else {
       status = "Offline";
+      // controller.localFfetch();
       notifyListeners();
     }
 
@@ -41,12 +46,14 @@ class CheckConnectionToInternet with ChangeNotifier {
           {
             status = "Online";
             notifyListeners();
+            // controller.fetch();
           }
           break;
         default:
           {
             status = 'Offline';
             notifyListeners();
+            // controller.localFfetch();
           }
           break;
       }

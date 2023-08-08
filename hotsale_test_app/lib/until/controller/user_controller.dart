@@ -8,7 +8,6 @@ import 'package:hotsale_test_app/until/model/user_model.dart';
 import 'package:hotsale_test_app/until/storage/local_storage.dart';
 
 class UserController extends GetxController with StateMixin<List<UserModel>> {
-  
   var users = <UserModel>[].obs;
   var isLoad = true.obs;
   int get countUsers => users.length;
@@ -18,6 +17,7 @@ class UserController extends GetxController with StateMixin<List<UserModel>> {
 
   var loadUserMoreText = ''.obs;
   var isLoadMore = false.obs;
+  var page = 1.obs;
 
   @override
   void onInit() {
@@ -25,14 +25,14 @@ class UserController extends GetxController with StateMixin<List<UserModel>> {
     super.onInit();
   }
 
-  void init () async{
-    var statusOnline  = await CheckConnectionToInternet().getInternetConnectStatus();
+  void init() async {
+    // var statusOnline  = await CheckConnectionToInternet().getInternetConnectStatus();
 
-    if(statusOnline == 'Offline'){
-     localFfetch();
-    }else{
-     fetch();
-    }
+    // if(statusOnline == 'Offline'){
+    //  localFfetch();
+    // }else{
+    //  fetch();
+    // }
   }
 
   @override
@@ -42,7 +42,6 @@ class UserController extends GetxController with StateMixin<List<UserModel>> {
 
   void onClose() {
     users.clear();
-    clearSingleUserData();
     super.onClose();
   }
 
@@ -58,21 +57,24 @@ class UserController extends GetxController with StateMixin<List<UserModel>> {
   }
 
   void loadMore(page) async {
-    
     isLoadMore.value = true;
     update();
 
     final data = await UsersApi().fetchData(options: "?page=" + page);
 
+    print('dataMore ${data}');
+
     if (data != null) {
       users.addAll(data);
       loadUserMoreText.value = 'Loaded new users';
-    }else{
-      loadUserMoreText.value = 'All users loaded';
     }
 
-    loadUserMoreText.value = '';
     isLoadMore.value = false;
+    update();
+  }
+
+  void setAllUsersLoaded(text){
+    loadUserMoreText.value = text;
     update();
   }
 
@@ -99,7 +101,6 @@ class UserController extends GetxController with StateMixin<List<UserModel>> {
   }
 
   void localSingle(id) async {
-
     final user = await LocalStorage().getLocalSingle(id);
 
     if (user != null) {
@@ -110,8 +111,12 @@ class UserController extends GetxController with StateMixin<List<UserModel>> {
     update();
   }
 
-  void clearSingleUserData(){
+  void setPage(number){
+    page.value = number;
+    update();
+  }
 
+  void clearSingleUserData() {
     singleUser = null;
     isUserLoad.value = true;
     update();

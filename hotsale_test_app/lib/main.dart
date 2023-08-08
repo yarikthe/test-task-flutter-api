@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:hotsale_test_app/until/internet/check_internet.dart';
@@ -7,12 +6,9 @@ import 'package:hotsale_test_app/view/tamplate/main.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(
-          ChangeNotifierProvider(
-            create: (_) => CheckConnectionToInternet(),
-            child:const MyApp()
-          )
-        );
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -20,14 +16,16 @@ class MyApp extends StatelessWidget {
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context)  {
-    return  GetMaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MainTamplateScren(screen: UsersScreen()),
-    );
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+        create: (_) => CheckConnectionToInternet(),
+        child: GetMaterialApp(
+          title: 'Flutter Demo',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: MainTamplateScren(screen: UsersScreen()),
+        ));
   }
 }

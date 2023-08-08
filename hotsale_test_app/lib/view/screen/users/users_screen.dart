@@ -25,22 +25,48 @@ class _UsersScreenState extends State<UsersScreen> {
   }
 
   void init() async {
+    controller.init();
+
+    var statusOnline =
+        await CheckConnectionToInternet().getInternetConnectStatus();
+
+    if (statusOnline == 'Offline') {
+      controller.localFfetch();
+    } else {
+      controller.fetch();
+    }
+
     _scrollController = ScrollController()
       ..addListener(() => {
-      
-          if(_scrollController.position.pixels == _scrollController.position.maxScrollExtent){
-            _loadMoreData()
-          }
-        
-      });
+            if (_scrollController.position.pixels ==
+                _scrollController.position.maxScrollExtent)
+              {_loadMoreData()}
+          });
   }
 
-  void _loadMoreData() {
+  void _loadMoreData() async {
     print('load data');
-    setState(() {
-      page += 1;
-    });
-    controller.loadMore(page.toString());
+    var statusOnline =
+        await CheckConnectionToInternet().getInternetConnectStatus();
+
+    if (statusOnline == 'Offline') {
+      controller.setAllUsersLoaded('Offline - no more load');
+    } else {
+      setState(() {
+        page += 1;
+      });
+      var totalPages = await LocalStorage().getTotalPages();
+
+      if (page <= totalPages) {
+        controller.setAllUsersLoaded('Loading...');
+        controller.loadMore(page.toString());
+      } else {
+        controller.setAllUsersLoaded('All users loaded');
+        setState(() {
+          page -= 1;
+        });
+      }
+    }
   }
 
   @override

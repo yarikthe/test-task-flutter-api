@@ -1,54 +1,65 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:hotsale_test_app/until/model/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
-
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  Future<List<UserModel>> getLocalData() async{
+  Future<List<UserModel>> getLocalData() async {
+    final SharedPreferences prefs = await _prefs;
+
+    String? users = prefs.getString('users');
+    var data = jsonDecode(users!);
+
+    return data.map((json) => UserModel.fromJson(json as Map<String, dynamic>)).toList();
+  }
+
+  Future<UserModel?> getLocalSingle(id) async {
+    final SharedPreferences prefs = await _prefs;
+
+    String? users = prefs.getString('users');
+    var data = jsonDecode(users!);
+
+    return data
+        .map((json) => UserModel.fromJson(json as Map<String, dynamic>))
+        .where((element) => element.id == id)
+        .first;
+  }
+
+  Future<void> setLocalData(data) async {
+    final SharedPreferences prefs = await _prefs;
+
+    String usersList = jsonEncode(json.decode(data)['data']);
+
+    await prefs.setString('users', usersList);
+  }
+
+  Future<void> updateLocalData(data) async {
+    final SharedPreferences prefs = await _prefs;
+
+    String? oldUsersList = prefs.getString('users'); 
+    String newUsersList = jsonEncode(json.decode(data)['data']);
     
-    final SharedPreferences prefs = await _prefs;
+    String _data = (oldUsersList! + newUsersList).replaceAll('][', ',');
 
-    List data = json.decode(prefs.getString('users') as String)['data'];
-
-    return data.map((json) => UserModel.fromJson(json)).toList();
+    await prefs.setString('users',_data);
   }
 
-  Future<UserModel?> getLocalSingle(id) async{
-
+  Future<void> clearLocalData() async {
     final SharedPreferences prefs = await _prefs;
-
-    List data = json.decode(prefs.getString('users') as String)['data'];
-
-    return data.map((json) => UserModel.fromJson(json)).where((element) => element.id == id).first; 
+    await prefs.remove('users');
   }
 
-  Future<void> setLocalData(data) async{
-    
+  Future<void> saveTotalPages(value) async {
     final SharedPreferences prefs = await _prefs;
-    await prefs.setString('users', data);
+    await prefs.setInt('total_pages', value);
   }
 
-  Future<void>updateLocalData(data) async{
-
-    setLocalData(data);
-
+  Future<int> getTotalPages() async {
     final SharedPreferences prefs = await _prefs;
-
-    // List currentData = json.decode(prefs.getString('users') as String)['data'];
-
-    // print(' data now ${currentData}');
-
-    // print(' data NEW ${data}');
-
-    // await prefs.setString('users',   data);
-  } 
-
-  Future<void> clearLocalData() async{
-    
-    final SharedPreferences prefs = await _prefs;
-    await prefs.remove('users');  
+    return prefs.getInt('total_pages')!.toInt();
   }
+
 }
